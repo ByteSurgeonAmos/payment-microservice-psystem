@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { SubscriptionStatus } from '../enums/subscription-status.enum';
 
 @Entity()
 export class Subscription {
@@ -17,14 +18,12 @@ export class Subscription {
   @Column()
   planId: string;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2 })
-  amount: number;
-
-  @Column()
-  currency: string;
-
-  @Column()
-  status: string;
+  @Column({
+    type: 'enum',
+    enum: SubscriptionStatus,
+    default: SubscriptionStatus.PENDING,
+  })
+  status: SubscriptionStatus;
 
   @Column({ nullable: true })
   paypalSubscriptionId: string;
@@ -34,6 +33,9 @@ export class Subscription {
 
   @Column({ nullable: true })
   endDate: Date;
+
+  @Column({ nullable: true })
+  lastPaymentDate: Date;
 
   @CreateDateColumn()
   createdAt: Date;

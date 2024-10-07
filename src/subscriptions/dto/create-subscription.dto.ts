@@ -18,4 +18,8 @@ export class CreateSubscriptionDto {
   @IsString()
   @IsIn(['USD', 'EUR', 'GBP'])
   currency: string;
+
+  @IsString()
+  @IsIn(['USD', 'EUR', 'GBP'])
+  initialPaymentAmount?: number;
 }

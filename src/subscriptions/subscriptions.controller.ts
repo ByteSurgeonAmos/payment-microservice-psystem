@@ -10,8 +10,15 @@ export class SubscriptionsController {
   @Post()
   async createSubscription(
     @Body() createSubscriptionDto: CreateSubscriptionDto,
-  ): Promise<Subscription> {
-    return this.subscriptionsService.createSubscription(createSubscriptionDto);
+  ) {
+    const result = await this.subscriptionsService.createSubscription(
+      createSubscriptionDto,
+    );
+
+    return {
+      subscription: result.subscription,
+      initialPaymentOrderId: result.initialPaymentOrderId,
+    };
   }
 
   @Get(':id')
