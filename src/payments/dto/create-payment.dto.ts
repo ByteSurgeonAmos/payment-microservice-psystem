@@ -1,13 +1,77 @@
-import { IsNumber, IsString, IsNotEmpty, Min, IsIn } from 'class-validator';
+import {
+  IsNumber,
+  IsString,
+  IsEnum,
+  IsOptional,
+  ValidateNested,
+  IsUUID,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+
+class CardDetailsDto {
+  @IsString()
+  number: string;
+
+  @IsString()
+  expirationMonth: string;
+
+  @IsString()
+  expirationYear: string;
+
+  @IsString()
+  securityCode: string;
+
+  @IsString()
+  name: string;
+}
+
+class BillingAddressDto {
+  @IsString()
+  addressLine1: string;
+
+  @IsOptional()
+  @IsString()
+  addressLine2?: string;
+
+  @IsString()
+  adminArea2: string;
+
+  @IsString()
+  adminArea1: string;
+
+  @IsString()
+  postalCode: string;
+
+  @IsString()
+  countryCode: string;
+}
 
 export class CreatePaymentDto {
-  @IsNotEmpty()
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0.01)
+  @IsNumber()
   amount: number;
 
-  @IsNotEmpty()
   @IsString()
-  @IsIn(['USD', 'EUR', 'GBP'])
   currency: string;
+
+  @IsUUID()
+  userId: string;
+
+  @IsEnum(['paypal', 'card'])
+  paymentMethod: 'paypal' | 'card';
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => CardDetailsDto)
+  cardDetails?: CardDetailsDto;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => BillingAddressDto)
+  billingAddress?: BillingAddressDto;
+
+  Dto;
+
+  @IsOptional()
+  @IsString()
+  subscriptionId?: string;
 }

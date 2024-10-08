@@ -396,10 +396,26 @@ export class SubscriptionsService {
   private async createPayPalOrder(
     amount: number,
     currency: string,
+    cardDetails?: {
+      number: string;
+      expirationMonth: string;
+      expirationYear: string;
+      securityCode: string;
+      name: string;
+    },
+    billingAddress?: {
+      addressLine1: string;
+      addressLine2?: string;
+      adminArea2: string;
+      adminArea1: string;
+      postalCode: string;
+      countryCode: string;
+    },
   ): Promise<string> {
     const request = new paypal.orders.OrdersCreateRequest();
     request.prefer('return=representation');
-    request.requestBody({
+
+    const requestBody: any = {
       intent: 'CAPTURE',
       purchase_units: [
         {
@@ -409,7 +425,28 @@ export class SubscriptionsService {
           },
         },
       ],
-    });
+    };
+
+    if (cardDetails && billingAddress) {
+      requestBody.payment_source = {
+        card: {
+          number: cardDetails.number,
+          expiry: `${cardDetails.expirationMonth}/${cardDetails.expirationYear}`,
+          name: cardDetails.name,
+          security_code: cardDetails.securityCode,
+          billing_address: {
+            address_line_1: billingAddress.addressLine1,
+            address_line_2: billingAddress.addressLine2,
+            admin_area_2: billingAddress.adminArea2,
+            admin_area_1: billingAddress.adminArea1,
+            postal_code: billingAddress.postalCode,
+            country_code: billingAddress.countryCode,
+          },
+        },
+      };
+    }
+
+    request.requestBody(requestBody);
 
     const response = await this.client.execute(request);
     return response.result.id;

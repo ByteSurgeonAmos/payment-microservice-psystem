@@ -14,21 +14,9 @@ export class PaypalService {
     this.client = new paypal.core.PayPalHttpClient(environment);
   }
 
-  async createOrder(amount: number, currency: string): Promise<string> {
-    const request = new paypal.orders.OrdersCreateRequest();
-    request.prefer('return=representation');
-    request.requestBody({
-      intent: 'CAPTURE',
-      purchase_units: [
-        {
-          amount: {
-            currency_code: currency,
-            value: amount.toString(),
-          },
-        },
-      ],
-    });
-
+  async createOrder(
+    request: paypal.orders.OrdersCreateRequest,
+  ): Promise<string> {
     const response = await this.client.execute(request);
     return response.result.id;
   }

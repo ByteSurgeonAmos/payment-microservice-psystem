@@ -23,6 +23,15 @@ export class Payment {
   @Column({ nullable: true })
   paypalOrderId: string;
 
+  @Column()
+  userId: string;
+
+  @Column({ nullable: true })
+  subscriptionId: string;
+
+  @Column()
+  paymentMethod: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PaymentsModule } from './payments/payments.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { WebhooksController } from './paypal/paypal.webhook.controlller';
 
 @Module({
   imports: [
@@ -27,5 +28,6 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
     PaymentsModule,
     SubscriptionsModule,
   ],
+  controllers: [WebhooksController],
 })
 export class AppModule {}

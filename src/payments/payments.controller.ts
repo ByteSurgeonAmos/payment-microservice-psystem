@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, Patch } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
 import { Payment } from './entities/payment.entity';
 import { CreatePaymentDto } from './dto/create-payment.dto';
@@ -14,6 +14,11 @@ export class PaymentsController {
     return this.paymentsService.createPayment(
       createPaymentDto.amount,
       createPaymentDto.currency,
+      createPaymentDto.userId,
+      createPaymentDto.paymentMethod,
+      createPaymentDto.cardDetails,
+      createPaymentDto.billingAddress,
+      createPaymentDto.subscriptionId,
     );
   }
 
