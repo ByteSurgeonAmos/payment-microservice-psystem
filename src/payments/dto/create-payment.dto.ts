@@ -69,8 +69,6 @@ export class CreatePaymentDto {
   @Type(() => BillingAddressDto)
   billingAddress?: BillingAddressDto;
 
-  Dto;
-
   @IsOptional()
   @IsString()
   subscriptionId?: string;

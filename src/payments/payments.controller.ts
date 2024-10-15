@@ -11,15 +11,20 @@ export class PaymentsController {
   async createPayment(
     @Body() createPaymentDto: CreatePaymentDto,
   ): Promise<Payment> {
-    return this.paymentsService.createPayment(
-      createPaymentDto.amount,
-      createPaymentDto.currency,
-      createPaymentDto.userId,
-      createPaymentDto.paymentMethod,
-      createPaymentDto.cardDetails,
-      createPaymentDto.billingAddress,
-      createPaymentDto.subscriptionId,
-    );
+    try {
+      console.log(createPaymentDto);
+      return this.paymentsService.createPayment(
+        createPaymentDto.amount,
+        createPaymentDto.currency,
+        createPaymentDto.userId,
+        createPaymentDto.paymentMethod,
+        createPaymentDto.cardDetails,
+        createPaymentDto.billingAddress,
+        createPaymentDto.subscriptionId,
+      );
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   @Get(':id')
