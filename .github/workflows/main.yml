@@ -35,7 +35,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 443
+          port: 22
           script: |
             cd /home/administrator/lattelink/payments-subscriptions-microservice
             git pull origin master
