@@ -32,13 +32,14 @@ jobs:
         if: github.ref == 'refs/heads/master'
         uses: appleboy/ssh-action@master
         with:
-          host: 69.197.176.221
-          username: root
-          password: lattelink123!@#
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
+          script_stop: true
           script: |
-            cd /home/administrator/lattelink/payments-subscriptions-microservice
-            git pull origin master
-            npm ci
-            npm run build
+            cd /home/administrator/lattelink/payments-subscriptions-microservice || exit 1
+            git pull origin master || exit 1
+            npm ci || exit 1
+            npm run build || exit 1
             pm2 reload payments-service || pm2 start dist/main.js --name "payments-service" --time
