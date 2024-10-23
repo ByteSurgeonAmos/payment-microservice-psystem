@@ -38,6 +38,27 @@ jobs:
           port: 22
           script_stop: true
           script: |
+            # Load NVM if it exists
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+            # If NVM isn't installed, install it
+            if ! command -v nvm &> /dev/null; then
+              curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+              export NVM_DIR="$HOME/.nvm"
+              [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            fi
+
+            # Install and use Node.js 18
+            nvm install 18
+            nvm use 18
+
+            # Install PM2 globally if not present
+            if ! command -v pm2 &> /dev/null; then
+              npm install -g pm2
+            fi
+
+            # Navigate to project directory and deploy
             cd /home/administrator/lattelink/payments-subscriptions-microservice || exit 1
             git pull origin master || exit 1
             npm ci || exit 1
