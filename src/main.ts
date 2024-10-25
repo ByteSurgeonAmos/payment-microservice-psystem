@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
     .setTitle('Payment Service')
-    .setDescription('API Documentation for Payments for Enterprise with Paypal')
+    .setDescription('API Documentation for Payments for Lattelink with Paypal')
     .setVersion('1.0')
     .build();
   const document = SwaggerModule.createDocument(app, config);
