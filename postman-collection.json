@@ -1,0 +1,215 @@
+{
+  "info": {
+    "name": "Payment and Subscription API Lattelink",
+    "description": "Collection for testing payment, subscription and webhook endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Create Payment (PayPal)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/payments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "payments"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 99.99,\n  \"currency\": \"USD\",\n  \"userId\": \"usr_123456789\",\n  \"paymentMethod\": \"paypal\"\n}"
+            },
+            "description": "Create a new payment using PayPal"
+          }
+        },
+        {
+          "name": "Create Payment (Card)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/payments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "payments"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 99.99,\n  \"currency\": \"USD\",\n  \"userId\": \"usr_123456789\",\n  \"paymentMethod\": \"card\",\n  \"cardDetails\": {\n    \"number\": \"4111111111111111\",\n    \"expirationMonth\": \"12\",\n    \"expirationYear\": \"2025\",\n    \"securityCode\": \"123\",\n    \"name\": \"John Doe\"\n  },\n  \"billingAddress\": {\n    \"addressLine1\": \"123 Main St\",\n    \"addressLine2\": \"Apt 4B\",\n    \"adminArea2\": \"San Francisco\",\n    \"adminArea1\": \"CA\",\n    \"postalCode\": \"94105\",\n    \"countryCode\": \"US\"\n  }\n}"
+            },
+            "description": "Create a new payment using credit card"
+          }
+        },
+        {
+          "name": "Get Payment",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/payments/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "payments", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "pay_123456789",
+                  "description": "Payment ID"
+                }
+              ]
+            },
+            "description": "Get payment details by ID"
+          }
+        },
+        {
+          "name": "Capture Payment",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{base_url}}/api/v1/payments/:id/capture",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "payments", ":id", "capture"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "pay_123456789",
+                  "description": "Payment ID"
+                }
+              ]
+            },
+            "description": "Capture an authorized payment"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Subscriptions",
+      "item": [
+        {
+          "name": "Create Subscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"usr_123456789\",\n  \"planId\": \"plan_premium_monthly\",\n  \"amount\": 29.99,\n  \"currency\": \"USD\",\n  \"initialPaymentAmount\": 9.99\n}"
+            },
+            "description": "Create a new subscription"
+          }
+        },
+        {
+          "name": "Get Subscription",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "sub_123456789",
+                  "description": "Subscription ID"
+                }
+              ]
+            },
+            "description": "Get subscription details by ID"
+          }
+        },
+        {
+          "name": "Cancel Subscription",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{base_url}}/api/v1/subscriptions/:id/cancel",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "subscriptions", ":id", "cancel"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "sub_123456789",
+                  "description": "Subscription ID"
+                }
+              ]
+            },
+            "description": "Cancel an active subscription"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Webhooks",
+      "item": [
+        {
+          "name": "PayPal Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "paypal-auth-algo",
+                "value": "SHA256withRSA"
+              },
+              {
+                "key": "paypal-cert-url",
+                "value": "https://api.paypal.com/v1/notifications/certs/CERT-360caa42-fca2a594-1d93a270"
+              },
+              {
+                "key": "paypal-transmission-id",
+                "value": "8f3cf162-40d6-11ee-9c30-6b18d8b5d14d"
+              },
+              {
+                "key": "paypal-transmission-sig",
+                "value": "signature_placeholder"
+              },
+              {
+                "key": "paypal-transmission-time",
+                "value": "2024-10-25T12:34:56Z"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/v1/webhooks/paypal",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "webhooks", "paypal"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"WH-82J284728P892214R-5WK24813RC056154S\",\n  \"event_type\": \"BILLING.SUBSCRIPTION.ACTIVATED\",\n  \"resource\": {\n    \"id\": \"I-BW452GLLEP1G\",\n    \"status\": \"ACTIVE\",\n    \"create_time\": \"2024-10-25T12:34:56Z\",\n    \"custom_id\": \"sub_123456789\"\n  },\n  \"create_time\": \"2024-10-25T12:34:56Z\"\n}"
+            },
+            "description": "Handle PayPal webhook notifications"
+          }
+        }
+      ]
+    }
+  ]
+}

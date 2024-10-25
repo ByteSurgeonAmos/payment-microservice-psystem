@@ -11,8 +11,17 @@ import {
 import { SubscriptionsService } from '../subscriptions/subscriptions.service';
 import { ConfigService } from '@nestjs/config';
 import * as paypal from '@paypal/checkout-server-sdk';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiHeader,
+  ApiBody,
+} from '@nestjs/swagger';
+import { PayPalWebhookHeadersDto } from './dto/paypal-webhook-headers.dto';
 
-@Controller('webhooks')
+@ApiTags('Webhooks')
+@Controller('api/v1/webhooks')
 export class WebhooksController {
   private readonly logger = new Logger(WebhooksController.name);
   private readonly paypalClient: paypal.core.PayPalHttpClient;
@@ -32,6 +41,80 @@ export class WebhooksController {
 
   @Post('paypal')
   @HttpCode(200)
+  @ApiOperation({
+    summary: 'Handle PayPal webhook',
+    description:
+      'Processes incoming PayPal webhook notifications for subscription events',
+  })
+  @ApiHeader({
+    name: 'paypal-auth-algo',
+    description: 'PayPal authentication algorithm',
+    required: true,
+    example: 'SHA256withRSA',
+  })
+  @ApiHeader({
+    name: 'paypal-cert-url',
+    description: 'PayPal certificate URL',
+    required: true,
+  })
+  @ApiHeader({
+    name: 'paypal-transmission-id',
+    description: 'PayPal transmission ID',
+    required: true,
+  })
+  @ApiHeader({
+    name: 'paypal-transmission-sig',
+    description: 'PayPal transmission signature',
+    required: true,
+  })
+  @ApiHeader({
+    name: 'paypal-transmission-time',
+    description: 'PayPal transmission timestamp',
+    required: true,
+  })
+  @ApiBody({
+    description: 'PayPal webhook event payload',
+    schema: {
+      type: 'object',
+      properties: {
+        id: {
+          type: 'string',
+          description: 'Webhook event ID',
+          example: 'WH-82J284728P892214R-5WK24813RC056154S',
+        },
+        event_type: {
+          type: 'string',
+          description: 'Type of webhook event',
+          example: 'BILLING.SUBSCRIPTION.ACTIVATED',
+        },
+        resource: {
+          type: 'object',
+          description: 'Event resource details',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Webhook processed successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        received: {
+          type: 'boolean',
+          example: true,
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Invalid webhook signature or payload',
+  })
+  @ApiResponse({
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    description: 'Error processing webhook',
+  })
   async handlePayPalWebhook(
     @Body() webhookBody: any,
     @Headers('paypal-auth-algo') authAlgo: string,
@@ -79,6 +162,13 @@ export class WebhooksController {
     }
   }
 
+  /**
+   * Verifies the PayPal webhook signature
+   * @param webhookBody The webhook event payload
+   * @param headers The webhook request headers
+   * @param webhookId The PayPal webhook ID from configuration
+   * @returns The verification status ('SUCCESS' or 'FAILURE')
+   */
   private async verifyWebhookSignature(
     webhookBody: any,
     headers: {
