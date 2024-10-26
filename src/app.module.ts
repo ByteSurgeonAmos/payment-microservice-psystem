@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PaymentsModule } from './payments/payments.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { WebhooksController } from './paypal/paypal.webhook.controlller';
+import { AllExceptionsFilter } from './common/all-exceptions.filter';
+import { APP_FILTER } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -27,6 +29,12 @@ import { WebhooksController } from './paypal/paypal.webhook.controlller';
     }),
     PaymentsModule,
     SubscriptionsModule,
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
   ],
   controllers: [WebhooksController],
 })

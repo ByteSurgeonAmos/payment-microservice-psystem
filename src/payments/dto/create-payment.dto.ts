@@ -5,6 +5,8 @@ import {
   IsOptional,
   ValidateNested,
   IsUUID,
+  Min,
+  MaxLength,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
@@ -99,33 +101,36 @@ export class CreatePaymentDto {
     minimum: 0,
   })
   @IsNumber()
+  @Min(0)
   amount: number;
 
   @ApiProperty({
     description: 'Currency code',
     example: 'USD',
+    enum: ['USD', 'EUR', 'GBP'],
   })
   @IsString()
+  @MaxLength(3)
   currency: string;
 
   @ApiProperty({
-    description: 'User ID',
-    example: 'usr_123456789',
+    description: 'User ID (must be a valid UUID)',
+    example: '123e4567-e89b-12d3-a456-426614174000',
   })
+  @IsString()
   @IsUUID()
   userId: string;
 
   @ApiProperty({
     description: 'Payment method',
     enum: ['paypal', 'card'],
-    example: 'card',
+    example: 'paypal',
   })
   @IsEnum(['paypal', 'card'])
   paymentMethod: 'paypal' | 'card';
 
   @ApiProperty({
     description: 'Card details (required if payment method is card)',
-    type: CardDetailsDto,
     required: false,
   })
   @IsOptional()
@@ -135,7 +140,6 @@ export class CreatePaymentDto {
 
   @ApiProperty({
     description: 'Billing address (required if payment method is card)',
-    type: BillingAddressDto,
     required: false,
   })
   @IsOptional()
@@ -144,11 +148,12 @@ export class CreatePaymentDto {
   billingAddress?: BillingAddressDto;
 
   @ApiProperty({
-    description: 'Subscription ID (optional)',
+    description: 'Subscription ID',
     required: false,
-    example: 'sub_123456789',
+    example: '123e4567-e89b-12d3-a456-426614174000',
   })
   @IsOptional()
   @IsString()
+  @IsUUID()
   subscriptionId?: string;
 }
