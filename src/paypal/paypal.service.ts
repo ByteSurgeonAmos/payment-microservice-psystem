@@ -10,13 +10,9 @@ export class PaypalService {
   constructor() {
     const clientId = process.env.PAYPAL_CLIENT_ID;
     const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
-    const environment = new paypal.core.SandboxEnvironment(
-      clientId,
-      clientSecret,
-    );
+    const environment = new paypal.core.LiveEnvironment(clientId, clientSecret);
     this.client = new paypal.core.PayPalHttpClient(environment);
   }
-
   async createOrder(
     request: paypal.orders.OrdersCreateRequest,
   ): Promise<string> {
