@@ -18,7 +18,6 @@ export class PaypalService {
   ): Promise<string> {
     this.logger.log('Attempting to create PayPal order...');
     try {
-      // Add PayPal-Request-Id header
       const requestId = uuidv4();
       request.headers = {
         ...request.headers,
@@ -26,7 +25,6 @@ export class PaypalService {
         prefer: 'return=representation',
       };
 
-      // For card payments, we need to structure the request differently
       if (request.requestBody.payment_source?.card) {
         const { card } = request.requestBody.payment_source;
         request.requestBody = {
